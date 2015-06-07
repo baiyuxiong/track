@@ -22,3 +22,10 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+#Project
+.idea
+.DS_Store
+test-results
+track.iml
+/app/tmp
