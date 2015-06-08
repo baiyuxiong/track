@@ -23,7 +23,7 @@ func (c Project) ListByOwner() revel.Result {
 }
 
 func (c Project) ListByCompany(company_id int) revel.Result {
-	if !lib.IsCompanyUser(company_id,c.User.Id){
+	if !lib.IsCompanyCheckedUser(company_id,c.User.Id){
 		return c.Err("没有权限")
 	}
 
@@ -43,7 +43,7 @@ func (c Project) Id(id int) revel.Result {
 		return c.Err(err.Error())
 	}
 
-	if !lib.IsCompanyUser(Project.CompanyId,c.User.Id){
+	if !lib.IsCompanyCheckedUser(Project.CompanyId,c.User.Id){
 		return c.Err("没有权限")
 	}
 
@@ -57,7 +57,7 @@ func (c Project) Add(company_id int,name,info string) revel.Result {
 		return result
 	}
 
-	if !lib.IsCompanyUser(company_id,c.User.Id){
+	if !lib.IsCompanyCheckedUser(company_id,c.User.Id){
 		return c.Err("没有权限")
 	}
 

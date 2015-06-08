@@ -38,19 +38,34 @@ func (c Company) Add(name ,info ,phone,address string) revel.Result {
 		return result
 	}
 
+	now := time.Now()
 	cmp := &models.Company{
 		OwnerId:c.User.Id,
 		Name:name,
 		Info:info,
 		Phone:phone,
 		Address:address,
-		CreatedAt:time.Now(),
-		UpdatedAt:time.Now(),
+		CreatedAt:now,
+		UpdatedAt:now,
 	}
 
 	_, err := app.Engine.Insert(cmp)
 	if err != nil{
 		return c.Err("添加失败，请联系管理员")
+	}
+
+	//add company users
+	cu := &models.CompanyUsers{
+		CompanyId: cmp.Id,
+		UserId:c.User.Id,
+		Status:utils.COMPANY_USER_STATUS_CHECK_YES,
+		UpdatedAt:now,
+		CreatedAt:now,
+	}
+	_, err = app.Engine.Insert(cu)
+	if err != nil{
+		app.Engine.Id(cmp.Id).Delete(cmp)
+		return c.Err("添加失败，数据已存在")
 	}
 
 	return c.OK(cmp)

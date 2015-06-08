@@ -84,20 +84,6 @@ func (_ tTestRunner) List(
 }
 
 
-type tComm struct {}
-var Comm tComm
-
-
-func (_ tComm) SendSms(
-		username string,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "username", username)
-	return revel.MainRouter.Reverse("Comm.SendSms", args).Url
-}
-
-
 type tCompany struct {}
 var Company tCompany
 
@@ -159,6 +145,53 @@ func (_ tCompany) UpdateLogo(
 	revel.Unbind(args, "id", id)
 	revel.Unbind(args, "logo", logo)
 	return revel.MainRouter.Reverse("Company.UpdateLogo", args).Url
+}
+
+
+type tCompanyUsers struct {}
+var CompanyUsers tCompanyUsers
+
+
+func (_ tCompanyUsers) List(
+		company_id int,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "company_id", company_id)
+	return revel.MainRouter.Reverse("CompanyUsers.List", args).Url
+}
+
+func (_ tCompanyUsers) Add(
+		company_id int,
+		user_id int,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "company_id", company_id)
+	revel.Unbind(args, "user_id", user_id)
+	return revel.MainRouter.Reverse("CompanyUsers.Add", args).Url
+}
+
+func (_ tCompanyUsers) Check(
+		company_id int,
+		user_id int,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "company_id", company_id)
+	revel.Unbind(args, "user_id", user_id)
+	return revel.MainRouter.Reverse("CompanyUsers.Check", args).Url
+}
+
+func (_ tCompanyUsers) Delete(
+		company_id int,
+		user_id int,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "company_id", company_id)
+	revel.Unbind(args, "user_id", user_id)
+	return revel.MainRouter.Reverse("CompanyUsers.Delete", args).Url
 }
 
 
@@ -287,6 +320,20 @@ func (_ tAuth) GetPassword(
 	revel.Unbind(args, "new_password", new_password)
 	revel.Unbind(args, "sms_code", sms_code)
 	return revel.MainRouter.Reverse("Auth.GetPassword", args).Url
+}
+
+
+type tComm struct {}
+var Comm tComm
+
+
+func (_ tComm) SendSms(
+		username string,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "username", username)
+	return revel.MainRouter.Reverse("Comm.SendSms", args).Url
 }
 
 

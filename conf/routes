@@ -20,12 +20,19 @@ POST     /company/update_logo                   Company.UpdateLogo
 GET      /company/list                          Company.List
 GET      /company/id                            Company.Id
 
+#company users
+POST     /company_users/add                     CompanyUsers.Add
+POST     /company_users/check                   CompanyUsers.Check
+POST     /company_users/delete                  CompanyUsers.Delete
+GET      /company_users/list                    CompanyUsers.List
+
 #project
 POST     /project/add                           Project.Add
 POST     /project/update                        Project.Update
 GET      /project/list_by_owner                 Project.ListByOwner
 GET      /project/list_by_company               Project.ListByCompany
 GET      /project/id                            Project.Id
+
 
 #comm
 POST     /comm/send_sms                         Comm.SendSms

@@ -155,7 +155,7 @@ func (t *AppTest) LoginCorrect() {
 	data := make(url.Values)
 	data["username"] = []string{username}
 	data["password"] = []string{password}
-	t.PostForm(t.GenUrl("/auth/login",token), data)
+	t.PostForm(t.GenUrl("/auth/login",""), data)
 	t.AssertContains("token")
 
 	var u = &models.Users{Username: username}

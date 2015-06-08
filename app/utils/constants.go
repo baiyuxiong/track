@@ -13,6 +13,13 @@ const (
 	COMPANY_NAME_MINSIZE = 4
 )
 
+//company user
+const (
+	COMPANY_USER_STATUS_CHECK_NO = 0
+	COMPANY_USER_STATUS_CHECK_YES = 1
+	COMPANY_USER_STATUS_DELETE = 2
+)
+
 //project
 const (
 	PROJECT_NAME_MINSIZE = 4

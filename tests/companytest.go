@@ -12,6 +12,7 @@ func (t *AppTest) StartTestCompany() {
 	token = ""
 	t.GetToken()
 	t.ClearCompanyTable()
+	t.ClearCompanyUsersTable()
 	t.AddCompany()
 	t.UpdateCompany()
 	t.UpdateCompanyLogo()
@@ -59,6 +60,12 @@ func (t *AppTest) AddCompany() {
 	t.AssertEqual(err,nil)
 
 	companyId = c.Id
+
+	cu := new(models.CompanyUsers)
+	has, err = app.Engine.Where("company_id=? and user_id=?", companyId,userId).Get(cu)
+
+	t.AssertEqual(has,true)
+	t.AssertEqual(err,nil)
 }
 
 //update
@@ -147,4 +154,8 @@ func (t *AppTest) AuthTest() {
 	t.AssertEqual(err,nil)
 	t.AssertNotEqual(data["logo"],c.Logo)
 	t.AssertNotEqual(newCompanyName,c.Name)
+
+	cmp.OwnerId = userId
+	_, err = app.Engine.Id(companyId).Cols("owner_id").Update(cmp)
+	t.AssertEqual(nil,err)
 }

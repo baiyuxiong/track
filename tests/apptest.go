@@ -13,6 +13,7 @@ func (t *AppTest) Before() {
 func (t *AppTest) TestAll() {
 	t.StartTestAuth()
 	t.StartTestCompany()
+	t.StartTestCompanyUsers()
 	t.StartTestProject()
 }
 

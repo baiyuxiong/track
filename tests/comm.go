@@ -12,10 +12,17 @@ var sms_code string = ""
 var token string=""
 var userId int = 0
 
+var username1 string = "13400001111"
+var password1 string = "654321"
+var userId1 int = 0
+var token1 string=""
+var smsCode1 string = ""
+
 var companyName string = "track cmp"
 var companyId int = 0
 
 var projectName string = "track project"
+var newProjectName string = "track project 123"
 var projectId int = 0
 
 
