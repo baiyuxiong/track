@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2015-06-08 06:35:43
+-- Generation Time: 2015-06-08 21:34:03
 -- 服务器版本： 5.6.24
 -- PHP Version: 5.5.24
 
@@ -37,13 +37,6 @@ CREATE TABLE IF NOT EXISTS `company` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `company`
---
-
-INSERT INTO `company` (`id`, `owner_id`, `name`, `info`, `logo`, `phone`, `address`, `created_at`, `updated_at`) VALUES
-(1, 2, 'track cmpa', '', 'abcdef', '', '', '2015-06-07 21:22:01', '2015-06-07 21:22:01');
 
 -- --------------------------------------------------------
 
@@ -90,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `project` (
   `info` text NOT NULL,
   `updated_at` datetime NOT NULL,
   `created_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='项目' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='项目' AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
@@ -103,13 +96,6 @@ CREATE TABLE IF NOT EXISTS `sms_code` (
   `code` char(6) NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='短信验证码';
-
---
--- 转存表中的数据 `sms_code`
---
-
-INSERT INTO `sms_code` (`username`, `code`, `updated_at`) VALUES
-('13456789012', '021558', '2015-06-07 21:22:01');
 
 -- --------------------------------------------------------
 
@@ -178,14 +164,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `activated_at` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `users`
---
-
-INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `token`, `is_activited`, `activated_at`, `created_at`, `updated_at`) VALUES
-(1, '127.0.0.1', '13456789012', '53d4d4a9c648d4d614476f193ee03e8c', 'ihbsEJ8csJm1Ckgh', '', 'bdb7c99ffde63231dca586da4563604a', 1, '2015-06-07 21:22:01', '2015-06-07 21:22:01', '2015-06-07 21:22:01');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -204,15 +183,6 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `user_profiles`
---
-
-INSERT INTO `user_profiles` (`user_id`, `gender`, `name`, `avatar`, `avatar_thumb1`, `avatar_thumb2`, `avatar_thumb3`, `created_at`, `updated_at`) VALUES
-(1, 1, 'test', '', '', '', '', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(2, 1, 'test2', '', '', '', '', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(3, 1, 'test3', '', '', '', '', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 --
 -- Indexes for dumped tables
@@ -290,7 +260,7 @@ MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `project`
 --
 ALTER TABLE `project`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `task`
 --
@@ -305,7 +275,7 @@ MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
