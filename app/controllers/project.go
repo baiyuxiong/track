@@ -22,13 +22,13 @@ func (c Project) ListByOwner() revel.Result {
 	return c.OK(projects)
 }
 
-func (c Project) ListByCompany(company_id int) revel.Result {
-	if !lib.IsCompanyCheckedUser(company_id,c.User.Id){
+func (c Project) ListByCompany(companyId int) revel.Result {
+	if !lib.IsCompanyCheckedUser(companyId,c.User.Id){
 		return c.Err("没有权限")
 	}
 
 	projects := make([]models.Project, 0)
-	err := app.Engine.Where("company_id = ?",company_id).OrderBy("updated_at desc").Find(&projects)
+	err := app.Engine.Where("company_id = ?", companyId).OrderBy("updated_at desc").Find(&projects)
 
 	if err != nil{
 		return c.Err(err.Error())
