@@ -19,7 +19,7 @@ type BaseController struct {
 
 // Before is called prior to the controller method
 func (c *BaseController) Before() revel.Result {
-	
+
 	invalid := true
 	if c.Params.Get(utils.URL_CLIENT_ID_KEY) == utils.URL_CLIENT_ID{
 		noTokenPath := []string{"/auth/reg", "/auth/login", "/auth/get_password", "/comm/send_sms"}

@@ -41,6 +41,8 @@ var HeaderFilter = func(c *revel.Controller, fc []revel.Filter) {
 	c.Response.Out.Header().Add("X-XSS-Protection", "1; mode=block")
 	c.Response.Out.Header().Add("X-Content-Type-Options", "nosniff")
 
+	c.Response.Out.Header().Add("Access-Control-Allow-Origin", "*")
+	c.Response.Out.Header().Add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 	fc[0](c, fc[1:]) // Execute the next filter stage.
 }
 

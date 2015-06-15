@@ -74,7 +74,7 @@ func (c Auth) Login(username, password string) revel.Result {
 	if !has {
 		return c.Err("用户名或密码出错")	}
 
-	if utils.EncryptPassword(u.Salt, u.Password) == password {
+	if utils.EncryptPassword(u.Salt, password) != u.Password {
 		return c.Err("用户名或密码出错")
 	}
 
@@ -88,13 +88,6 @@ func (c Auth) Login(username, password string) revel.Result {
 	return c.OK(u)
 }
 
-func (c Auth) Logout() revel.Result {
-	_, err := app.Engine.Id(c.User.Id).Cols("token").Update(&models.Users{Token: "",UpdatedAt:time.Now()})
-	if err != nil{
-		return c.Err("退出失败")
-	}
-	return c.OK("")
-}
 
 func (c Auth) ChangePassword(old_password,new_password string) revel.Result {
 	temp := utils.EncryptPassword(c.User.Salt,old_password)
@@ -131,4 +124,13 @@ func (c Auth) GetPassword(username,new_password,sms_code string) revel.Result {
 		return c.OK(u)
 	}
 	return c.Err("修改密码失败，请联系管理员")
+}
+
+
+func (c Auth) Logout() revel.Result {
+	_, err := app.Engine.Id(c.User.Id).Cols("token").Update(&models.Users{Token: "",UpdatedAt:time.Now()})
+	if err != nil{
+		return c.Err("退出失败")
+	}
+	return c.OK("")
 }
