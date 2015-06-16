@@ -29,7 +29,7 @@ func (t *AppTest) User1UncheckFromCompanyMember() {
 
 func (t *AppTest) AddProjectTest() {
 	data := make(url.Values)
-	data["company_id"] = []string{strconv.Itoa(companyId)}
+	data["companyId"] = []string{strconv.Itoa(companyId)}
 	data["info"] = []string{projectName}
 	t.PostForm(t.GenUrl("/project/add",token1), data)
 	t.AssertContains("名称不能为空")
@@ -85,11 +85,11 @@ func (t *AppTest) ListByOwnerTest() {
 	t.AssertContains(newProjectName)
 }
 func (t *AppTest) ListByCompanyTest() {
-	t.Get(t.GenUrl("/project/list_by_company",token1)+"&company_id="+strconv.Itoa(companyId))
+	t.Get(t.GenUrl("/project/list_by_company",token1)+"&companyId="+strconv.Itoa(companyId))
 	t.AssertNotContains(newProjectName)
 	t.AssertContains("没有权限")
 
-	t.Get(t.GenUrl("/project/list_by_company",token)+"&company_id="+strconv.Itoa(companyId))
+	t.Get(t.GenUrl("/project/list_by_company",token)+"&companyId="+strconv.Itoa(companyId))
 	t.AssertContains(newProjectName)
 }
 func (t *AppTest)IdTest() {

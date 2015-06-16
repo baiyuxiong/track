@@ -15,11 +15,11 @@ type CompanyUsers struct {
 
 
 
-func (c CompanyUsers) List(company_id int) revel.Result {
+func (c CompanyUsers) List(companyId int) revel.Result {
 
-	if lib.IsCompanyCheckedUser(company_id,c.User.Id){
+	if lib.IsCompanyCheckedUser(companyId,c.User.Id){
 		companyUsers := make([]models.CompanyUsers, 0)
-		err := app.Engine.Where("company_id = ?",company_id).OrderBy("created_at desc").Find(&companyUsers)
+		err := app.Engine.Where("company_id = ?",companyId).OrderBy("created_at desc").Find(&companyUsers)
 		if err != nil{
 			return c.Err(err.Error())
 		}
@@ -28,21 +28,21 @@ func (c CompanyUsers) List(company_id int) revel.Result {
 	return c.Err("没有权限")
 }
 
-func (c CompanyUsers) Add(company_id,user_id int) revel.Result {
-	isOwner,_ := lib.IsCompanyOwner(nil,company_id,c.User.Id)
+func (c CompanyUsers) Add(companyId, userId int) revel.Result {
+	isOwner,_ := lib.IsCompanyOwner(nil, companyId,c.User.Id)
 	if !isOwner{
 		return c.Err("没有权限")
 	}
 
-	has := lib.IsCompanyUser(company_id,user_id)
+	has := lib.IsCompanyUser(companyId, userId)
 	if has{
 		return c.Err("用户已存在")
 	}
 
 	now := time.Now()
 	cu := &models.CompanyUsers{
-		CompanyId: company_id,
-		UserId:user_id,
+		CompanyId: companyId,
+		UserId:userId,
 		Status:utils.COMPANY_USER_STATUS_CHECK_NO,
 		UpdatedAt:now,
 		CreatedAt:now,
@@ -54,39 +54,39 @@ func (c CompanyUsers) Add(company_id,user_id int) revel.Result {
 	return c.OK(nil)
 }
 
-func (c CompanyUsers) Check(company_id,user_id int) revel.Result {
-	isOk,message := c.changeStatus(company_id,user_id,utils.COMPANY_USER_STATUS_CHECK_YES)
+func (c CompanyUsers) Check(companyId, userId int) revel.Result {
+	isOk,message := c.changeStatus(companyId, userId,utils.COMPANY_USER_STATUS_CHECK_YES)
 	if !isOk{
 		return c.Err(message)
 	}
 	return c.OK(nil)
 }
 
-func (c CompanyUsers) Delete(company_id,user_id int) revel.Result {
-	isOk,message := c.changeStatus(company_id,user_id,utils.COMPANY_USER_STATUS_DELETE)
+func (c CompanyUsers) Delete(companyId, userId int) revel.Result {
+	isOk,message := c.changeStatus(companyId, userId,utils.COMPANY_USER_STATUS_DELETE)
 	if !isOk{
 		return c.Err(message)
 	}
 	return c.OK(nil)
 }
 
-func (c CompanyUsers) changeStatus(company_id, user_id, status int) (isOk bool,message string) {
+func (c CompanyUsers) changeStatus(companyId, userId, status int) (isOk bool,message string) {
 	isOk = false
 	message = ""
 
-	isOwner,_ := lib.IsCompanyOwner(nil,company_id,c.User.Id)
+	isOwner,_ := lib.IsCompanyOwner(nil, companyId,c.User.Id)
 	if !isOwner{
 		message = "没有权限"
 		return
 	}
 
-	has := lib.IsCompanyUser(company_id,user_id)
+	has := lib.IsCompanyUser(companyId, userId)
 	if !has{
 		message = "该用户未申请"
 		return
 	}
 
-	_, err := app.Engine.Where("company_id =  ? and user_id = ?", company_id, user_id).Cols("status").Update(&models.CompanyUsers{Status:status})
+	_, err := app.Engine.Where("company_id =  ? and user_id = ?", companyId, userId).Cols("status").Update(&models.CompanyUsers{Status:status})
 
 	if err != nil{
 		message = err.Error()

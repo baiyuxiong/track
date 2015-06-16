@@ -7,6 +7,7 @@ import (
 	"github.com/baiyuxiong/track/app"
 	"github.com/baiyuxiong/track/app/lib"
 	"time"
+	"fmt"
 )
 
 type Task struct {
@@ -14,70 +15,86 @@ type Task struct {
 }
 
 type TodoList  struct {
-	TasksInChange  []models.Task
-	TasksOwnedByMe []models.Task
-	Users          map[int]models.UserProfiles
-	Projects       map[int]models.Project
+	TasksInChange  []models.Task `json:"tasksInChange"`
+	TasksOwnedByMe []models.Task `json:"tasksOwnedByMe"`
+	Users          map[string]models.UserProfiles `json:"users"`
+	Projects       map[string]models.Project `json:"projects"`
+	Transfers      map[string]models.TaskTransfer `json:"transfers"`
 }
 
 //我负责的、未完成的
 func (c Task) ListTodo() revel.Result {
 	tasksInChange := make([]models.Task, 0)
 	//我负责的、未完成的
-	err := app.Engine.Where("status=?", utils.TASK_STATUS_DOING).Where("in_charge_id = ?", c.User.Id).OrderBy("priority,updated_at desc").Find(&tasksInChange)
+	err := app.Engine.Where("status=?", utils.TASK_STATUS_DOING).Where("in_charge_user_id = ?", c.User.Id).OrderBy("priority,updated_at desc").Find(&tasksInChange)
 	if err != nil {
 		return c.Err(err.Error())
 	}
 
 	tasksOwnedByMe := make([]models.Task, 0)
-	err = app.Engine.Where("status=?", utils.TASK_STATUS_DOING).Where("owner_id <> in_charge_id").Where("owner_id = ?", c.User.Id).OrderBy("priority,updated_at desc").Find(&tasksOwnedByMe)
+	err = app.Engine.Where("status=?", utils.TASK_STATUS_DOING).Where("owner_id <> in_charge_user_id").Where("owner_id = ?", c.User.Id).OrderBy("priority,updated_at desc").Find(&tasksOwnedByMe)
 	if err != nil {
 		return c.Err(err.Error())
 	}
 
 	todoList := TodoList{
-		TasksInChange:make([]models.Task),
-		TasksOwnedByMe:make([]models.Task),
-		Users:make(map[int]models.UserProfiles),
-		Projects:make(map[int]models.Project),
+		TasksInChange:tasksInChange,
+		TasksOwnedByMe:tasksOwnedByMe,
+		Users:make(map[string]models.UserProfiles, 0),
+		Projects:make(map[string]models.Project, 0),
+		Transfers:make(map[string]models.TaskTransfer, 0),
 	}
 	for _, tic := range tasksInChange {
-		//TODO 判断存在，避免重复取库
-		_, exists := todoList.Users[tic.OwnerId]
-		if !exists{
+		transfer := new(models.TaskTransfer)
+		has, err := app.Engine.Id(tic.LatestTransferId).Get(transfer)
+		if !has {
+			return c.Err("数据有误，请联系管理员"+err.Error())
+		}
+		todoList.Transfers[fmt.Sprint(tic.LatestTransferId)] =*transfer
+
+		_, exists := todoList.Users[fmt.Sprint(tic.OwnerId)]
+		if !exists {
 			userProfile := new(models.UserProfiles)
-			has, _ := app.Engine.Id(tic.OwnerId).Get(UserProfiles)
-			if has{
-				todoList.Users[tic.OwnerId] =userProfile
+			has, _ := app.Engine.Id(tic.OwnerId).Get(userProfile)
+			if has {
+				todoList.Users[fmt.Sprint(tic.OwnerId)] =*userProfile
 			}
 		}
 
-		_, exists = todoList.Projects[tic.ProjectId]
+		_, exists = todoList.Projects[fmt.Sprint(tic.ProjectId)]
 		if !exists {
 			project := new(models.Project)
 			has, _ := app.Engine.Id(tic.ProjectId).Get(project)
 			if has {
-				todoList.Projects[tic.ProjectId] =project
+				todoList.Projects[fmt.Sprint(tic.ProjectId)] =*project
 			}
 		}
 	}
 
 	for _, tobm := range tasksOwnedByMe {
-		_, exists := todoList.Users[tobm.OwnerId]
+		transfer := new(models.TaskTransfer)
+		has, err := app.Engine.Id(tobm.LatestTransferId).Get(transfer)
+		if !has {
+			return c.Err("数据有误，请联系管理员"+err.Error())
+		}
+		todoList.Transfers[fmt.Sprint(tobm.LatestTransferId)] =*transfer
+
+
+		_, exists := todoList.Users[fmt.Sprint(transfer.AssignTo)]
 		if !exists {
 			userProfile := new(models.UserProfiles)
-			has, _ := app.Engine.Id(tobm.InChargeId).Get(UserProfiles)
+			has, _ := app.Engine.Id(transfer.AssignTo).Get(userProfile)
 			if has {
-				todoList.Users[tobm.InChargeId] =userProfile
+				todoList.Users[fmt.Sprint(transfer.AssignTo)] = *userProfile
 			}
 		}
 
-		_, exists = todoList.Projects[tobm.ProjectId]
+		_, exists = todoList.Projects[fmt.Sprint(tobm.ProjectId)]
 		if !exists {
 			project := new(models.Project)
 			has, _ := app.Engine.Id(tobm.ProjectId).Get(project)
 			if has {
-				todoList.Projects[tobm.ProjectId] =project
+				todoList.Projects[fmt.Sprint(tobm.ProjectId)] = *project
 			}
 		}
 	}
@@ -85,23 +102,23 @@ func (c Task) ListTodo() revel.Result {
 }
 
 
-func (c Task) Add(companyId,projectId,priority,InChargeId int,name,info string,deadline time.Time) revel.Result {
-	if !lib.IsCompanyCheckedUser(companyId,c.User.Id){
+func (c Task) Add(companyId, projectId, priority, inChargeUserId int, name, info string, deadline time.Time) revel.Result {
+	if !lib.IsCompanyCheckedUser(companyId, c.User.Id) {
 		return c.Err("没有权限")
 	}
-	if !lib.IsCompanyCheckedUser(companyId,InChargeId){
-		return c.Err("不能指派给不同单位的人员")
+	if !lib.IsCompanyCheckedUser(companyId, inChargeUserId) {
+		return c.Err("被指派用户不是团队成员，不能指派")
 	}
-	if !lib.IsProjectBelongToCompany(nil,projectId,companyId){
-		return c.Err("没有权限")
+	if res, _ := lib.IsProjectBelongToCompany(nil, projectId, companyId); !res {
+		return c.Err("项目不属于本团队")
 	}
 
 	task := &models.Task{
 		CompanyId:companyId,
 		ProjectId:projectId,
 		OwnerId:c.User.Id,
-		InChargeId:InChargeId,
-		InChargeProgress:0,
+		LatestTransferId:0,
+		InChargeUserId:inChargeUserId,
 		Priority:priority,
 		Status:utils.TASK_STATUS_DOING,
 		Name:name,
@@ -111,24 +128,49 @@ func (c Task) Add(companyId,projectId,priority,InChargeId int,name,info string,d
 	}
 
 	_, err := app.Engine.Insert(task)
-	if err != nil{
+	if err != nil {
 		return c.Err("添加失败，请联系管理员")
 	}
 
 	taskTransfer := &models.TaskTransfer{
 		TaskId:task.Id,
-		AssignTo:InChargeId,
-		AssignFrom:c.User.Id,
+		AssignTo:inChargeUserId,
+		AssignFr:c.User.Id,
 		IsRead:utils.TASK_UN_READ,
 		Progress:0,
 		CreatedAt:time.Now(),
 		UpdatedAt:time.Now(),
 	}
 	_, err = app.Engine.Insert(taskTransfer)
-	if err != nil{
+	if err != nil {
 		app.Engine.Id(task.Id).Delete(task)
 		return c.Err("添加失败，请联系管理员")
 	}
+
+	task.LatestTransferId = taskTransfer.Id
+	app.Engine.Id(task.Id).Cols("latest_transfer_id").Update(task)
+
 	return c.OK(nil)
 }
+
+func (c Task) Done(companyId, taskId int) revel.Result {
+	if !lib.IsCompanyCheckedUser(companyId, c.User.Id) {
+		return c.Err("没有权限")
+	}
+
+	task := &models.Task{}
+	has, _ := app.Engine.Id(taskId).Get(task)
+	if !has {
+		return c.Err("任务记录不存在")
+	}
+
+	if task.OwnerId != c.User.Id {
+		return c.Err("不是任务发起人，没有权限")
+	}
+
+	task.Status = utils.TASK_STATUS_DONE
+	app.Engine.Id(taskId).Cols("status").Update(task)
+	return c.OK(nil)
+}
+
 

@@ -25,6 +25,36 @@ func (_ tBaseController) Err(
 }
 
 
+type tTestRunner struct {}
+var TestRunner tTestRunner
+
+
+func (_ tTestRunner) Index(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("TestRunner.Index", args).Url
+}
+
+func (_ tTestRunner) Run(
+		suite string,
+		test string,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "suite", suite)
+	revel.Unbind(args, "test", test)
+	return revel.MainRouter.Reverse("TestRunner.Run", args).Url
+}
+
+func (_ tTestRunner) List(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("TestRunner.List", args).Url
+}
+
+
 type tStatic struct {}
 var Static tStatic
 
@@ -54,33 +84,63 @@ func (_ tStatic) ServeModule(
 }
 
 
-type tTestRunner struct {}
-var TestRunner tTestRunner
+type tAuth struct {}
+var Auth tAuth
 
 
-func (_ tTestRunner) Index(
+func (_ tAuth) Reg(
+		username string,
+		password string,
+		smsCode string,
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("TestRunner.Index", args).Url
+	revel.Unbind(args, "username", username)
+	revel.Unbind(args, "password", password)
+	revel.Unbind(args, "smsCode", smsCode)
+	return revel.MainRouter.Reverse("Auth.Reg", args).Url
 }
 
-func (_ tTestRunner) Run(
-		suite string,
-		test string,
+func (_ tAuth) Login(
+		username string,
+		password string,
 		) string {
 	args := make(map[string]string)
 	
-	revel.Unbind(args, "suite", suite)
-	revel.Unbind(args, "test", test)
-	return revel.MainRouter.Reverse("TestRunner.Run", args).Url
+	revel.Unbind(args, "username", username)
+	revel.Unbind(args, "password", password)
+	return revel.MainRouter.Reverse("Auth.Login", args).Url
 }
 
-func (_ tTestRunner) List(
+func (_ tAuth) ChangePassword(
+		oldPassword string,
+		newPassword string,
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("TestRunner.List", args).Url
+	revel.Unbind(args, "oldPassword", oldPassword)
+	revel.Unbind(args, "newPassword", newPassword)
+	return revel.MainRouter.Reverse("Auth.ChangePassword", args).Url
+}
+
+func (_ tAuth) GetPassword(
+		username string,
+		newPassword string,
+		smsCode string,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "username", username)
+	revel.Unbind(args, "newPassword", newPassword)
+	revel.Unbind(args, "smsCode", smsCode)
+	return revel.MainRouter.Reverse("Auth.GetPassword", args).Url
+}
+
+func (_ tAuth) Logout(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("Auth.Logout", args).Url
 }
 
 
@@ -162,50 +222,58 @@ func (_ tCompany) UpdateLogo(
 }
 
 
-type tCompanyUsers struct {}
-var CompanyUsers tCompanyUsers
+type tTaskTransfer struct {}
+var TaskTransfer tTaskTransfer
 
 
-func (_ tCompanyUsers) List(
-		company_id int,
+func (_ tTaskTransfer) Add(
+		companyId int,
+		taskId int,
+		assignTo int,
+		info string,
 		) string {
 	args := make(map[string]string)
 	
-	revel.Unbind(args, "company_id", company_id)
-	return revel.MainRouter.Reverse("CompanyUsers.List", args).Url
+	revel.Unbind(args, "companyId", companyId)
+	revel.Unbind(args, "taskId", taskId)
+	revel.Unbind(args, "assignTo", assignTo)
+	revel.Unbind(args, "info", info)
+	return revel.MainRouter.Reverse("TaskTransfer.Add", args).Url
 }
 
-func (_ tCompanyUsers) Add(
-		company_id int,
-		user_id int,
+func (_ tTaskTransfer) UpdateProgress(
+		companyId int,
+		taskId int,
+		progress int,
+		info string,
 		) string {
 	args := make(map[string]string)
 	
-	revel.Unbind(args, "company_id", company_id)
-	revel.Unbind(args, "user_id", user_id)
-	return revel.MainRouter.Reverse("CompanyUsers.Add", args).Url
+	revel.Unbind(args, "companyId", companyId)
+	revel.Unbind(args, "taskId", taskId)
+	revel.Unbind(args, "progress", progress)
+	revel.Unbind(args, "info", info)
+	return revel.MainRouter.Reverse("TaskTransfer.UpdateProgress", args).Url
 }
 
-func (_ tCompanyUsers) Check(
-		company_id int,
-		user_id int,
+func (_ tTaskTransfer) Read(
+		companyId int,
+		taskId int,
 		) string {
 	args := make(map[string]string)
 	
-	revel.Unbind(args, "company_id", company_id)
-	revel.Unbind(args, "user_id", user_id)
-	return revel.MainRouter.Reverse("CompanyUsers.Check", args).Url
+	revel.Unbind(args, "companyId", companyId)
+	revel.Unbind(args, "taskId", taskId)
+	return revel.MainRouter.Reverse("TaskTransfer.Read", args).Url
 }
 
-func (_ tCompanyUsers) Delete(
-		company_id int,
-		user_id int,
+func (_ tTaskTransfer) ListByTaskId(
+		taskId int,
 		) string {
 	args := make(map[string]string)
 	
-	revel.Unbind(args, "company_id", company_id)
-	revel.Unbind(args, "user_id", user_id)
-	return revel.MainRouter.Reverse("CompanyUsers.Delete", args).Url
+	revel.Unbind(args, "taskId", taskId)
+	return revel.MainRouter.Reverse("TaskTransfer.ListByTaskId", args).Url
 }
 
 
@@ -221,6 +289,53 @@ func (_ tApp) Index(
 }
 
 
+type tCompanyUsers struct {}
+var CompanyUsers tCompanyUsers
+
+
+func (_ tCompanyUsers) List(
+		companyId int,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "companyId", companyId)
+	return revel.MainRouter.Reverse("CompanyUsers.List", args).Url
+}
+
+func (_ tCompanyUsers) Add(
+		companyId int,
+		userId int,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "companyId", companyId)
+	revel.Unbind(args, "userId", userId)
+	return revel.MainRouter.Reverse("CompanyUsers.Add", args).Url
+}
+
+func (_ tCompanyUsers) Check(
+		companyId int,
+		userId int,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "companyId", companyId)
+	revel.Unbind(args, "userId", userId)
+	return revel.MainRouter.Reverse("CompanyUsers.Check", args).Url
+}
+
+func (_ tCompanyUsers) Delete(
+		companyId int,
+		userId int,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "companyId", companyId)
+	revel.Unbind(args, "userId", userId)
+	return revel.MainRouter.Reverse("CompanyUsers.Delete", args).Url
+}
+
+
 type tProject struct {}
 var Project tProject
 
@@ -233,11 +348,11 @@ func (_ tProject) ListByOwner(
 }
 
 func (_ tProject) ListByCompany(
-		company_id int,
+		companyId int,
 		) string {
 	args := make(map[string]string)
 	
-	revel.Unbind(args, "company_id", company_id)
+	revel.Unbind(args, "companyId", companyId)
 	return revel.MainRouter.Reverse("Project.ListByCompany", args).Url
 }
 
@@ -251,13 +366,13 @@ func (_ tProject) Id(
 }
 
 func (_ tProject) Add(
-		company_id int,
+		companyId int,
 		name string,
 		info string,
 		) string {
 	args := make(map[string]string)
 	
-	revel.Unbind(args, "company_id", company_id)
+	revel.Unbind(args, "companyId", companyId)
 	revel.Unbind(args, "name", name)
 	revel.Unbind(args, "info", info)
 	return revel.MainRouter.Reverse("Project.Add", args).Url
@@ -281,23 +396,43 @@ type tTask struct {}
 var Task tTask
 
 
-func (_ tTask) TodoList(
+func (_ tTask) ListTodo(
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("Task.TodoList", args).Url
+	return revel.MainRouter.Reverse("Task.ListTodo", args).Url
 }
 
-
-type tTaskTransfer struct {}
-var TaskTransfer tTaskTransfer
-
-
-func (_ tTaskTransfer) Index(
+func (_ tTask) Add(
+		companyId int,
+		projectId int,
+		priority int,
+		inChargeUserId int,
+		name string,
+		info string,
+		deadline interface{},
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("TaskTransfer.Index", args).Url
+	revel.Unbind(args, "companyId", companyId)
+	revel.Unbind(args, "projectId", projectId)
+	revel.Unbind(args, "priority", priority)
+	revel.Unbind(args, "inChargeUserId", inChargeUserId)
+	revel.Unbind(args, "name", name)
+	revel.Unbind(args, "info", info)
+	revel.Unbind(args, "deadline", deadline)
+	return revel.MainRouter.Reverse("Task.Add", args).Url
+}
+
+func (_ tTask) Done(
+		companyId int,
+		taskId int,
+		) string {
+	args := make(map[string]string)
+	
+	revel.Unbind(args, "companyId", companyId)
+	revel.Unbind(args, "taskId", taskId)
+	return revel.MainRouter.Reverse("Task.Done", args).Url
 }
 
 
@@ -310,66 +445,6 @@ func (_ tUserProfiles) Index(
 	args := make(map[string]string)
 	
 	return revel.MainRouter.Reverse("UserProfiles.Index", args).Url
-}
-
-
-type tAuth struct {}
-var Auth tAuth
-
-
-func (_ tAuth) Reg(
-		username string,
-		password string,
-		sms_code string,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "username", username)
-	revel.Unbind(args, "password", password)
-	revel.Unbind(args, "sms_code", sms_code)
-	return revel.MainRouter.Reverse("Auth.Reg", args).Url
-}
-
-func (_ tAuth) Login(
-		username string,
-		password string,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "username", username)
-	revel.Unbind(args, "password", password)
-	return revel.MainRouter.Reverse("Auth.Login", args).Url
-}
-
-func (_ tAuth) ChangePassword(
-		old_password string,
-		new_password string,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "old_password", old_password)
-	revel.Unbind(args, "new_password", new_password)
-	return revel.MainRouter.Reverse("Auth.ChangePassword", args).Url
-}
-
-func (_ tAuth) GetPassword(
-		username string,
-		new_password string,
-		sms_code string,
-		) string {
-	args := make(map[string]string)
-	
-	revel.Unbind(args, "username", username)
-	revel.Unbind(args, "new_password", new_password)
-	revel.Unbind(args, "sms_code", sms_code)
-	return revel.MainRouter.Reverse("Auth.GetPassword", args).Url
-}
-
-func (_ tAuth) Logout(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("Auth.Logout", args).Url
 }
 
 

@@ -37,6 +37,12 @@ GET      /project/id                            Project.Id
 POST      /task/add                             Task.Add
 GET      /task/list_todo                        Task.ListTodo
 
+#task transfer
+POST      /task_transfer/add                             TaskTransfer.Add
+POST      /task_transfer/update_progress                        TaskTransfer.UpdateProgress
+POST      /task_transfer/read                        TaskTransfer.Read
+POST      /task_transfer/list_by_taskId                        TaskTransfer.ListByTaskId
+
 
 #comm
 POST     /comm/send_sms                         Comm.SendSms

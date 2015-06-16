@@ -32,7 +32,7 @@ func (t *AppTest) RegAnotherUser()  {
 	data := make(url.Values)
 	data["username"] = []string{username1}
 	data["password"] = []string{password1}
-	data["sms_code"] = []string{smsCode1}
+	data["smsCode"] = []string{smsCode1}
 	t.PostForm(t.GenUrl("/auth/reg",token), data)
 	t.AssertContains("200")
 
@@ -61,12 +61,12 @@ func (t *AppTest) AddCompanyUsers() {
 	t.AssertNotEqual(companyId,0)
 
 	data := make(url.Values)
-	data["company_id"] = []string{strconv.Itoa(companyId)}
-	data["user_id"] = []string{strconv.Itoa(userId)}
+	data["companyId"] = []string{strconv.Itoa(companyId)}
+	data["userId"] = []string{strconv.Itoa(userId)}
 	t.PostForm(t.GenUrl("/company_users/add",token1), data)
 	t.AssertContains("没有权限")
 
-	data["user_id"] = []string{strconv.Itoa(userId1)}
+	data["userId"] = []string{strconv.Itoa(userId1)}
 	t.PostForm(t.GenUrl("/company_users/add",token), data)
 	t.AssertContains("200")
 
@@ -76,16 +76,16 @@ func (t *AppTest) AddCompanyUsers() {
 
 func (t *AppTest) CheckCompanyUsers() {
 	data := make(url.Values)
-	data["company_id"] = []string{strconv.Itoa(companyId)}
-	data["user_id"] = []string{strconv.Itoa(userId)}
+	data["companyId"] = []string{strconv.Itoa(companyId)}
+	data["userId"] = []string{strconv.Itoa(userId)}
 	t.PostForm(t.GenUrl("/company_users/check",token1), data)
 	t.AssertContains("没有权限")
 
-	data["user_id"] = []string{strconv.Itoa(userId1+userId)}
+	data["userId"] = []string{strconv.Itoa(userId1+userId)}
 	t.PostForm(t.GenUrl("/company_users/check",token), data)
 	t.AssertContains("该用户未申请")
 
-	data["user_id"] = []string{strconv.Itoa(userId1)}
+	data["userId"] = []string{strconv.Itoa(userId1)}
 	t.PostForm(t.GenUrl("/company_users/check",token), data)
 	t.AssertContains("200")
 
@@ -100,16 +100,16 @@ func (t *AppTest) CheckCompanyUsers() {
 
 func (t *AppTest) DeleteCompanyUsers() {
 	data := make(url.Values)
-	data["company_id"] = []string{strconv.Itoa(companyId)}
-	data["user_id"] = []string{strconv.Itoa(userId)}
+	data["companyId"] = []string{strconv.Itoa(companyId)}
+	data["userId"] = []string{strconv.Itoa(userId)}
 	t.PostForm(t.GenUrl("/company_users/delete",token1), data)
 	t.AssertContains("没有权限")
 
-	data["user_id"] = []string{strconv.Itoa(userId1+userId)}
+	data["userId"] = []string{strconv.Itoa(userId1+userId)}
 	t.PostForm(t.GenUrl("/company_users/delete",token), data)
 	t.AssertContains("该用户未申请")
 
-	data["user_id"] = []string{strconv.Itoa(userId1)}
+	data["userId"] = []string{strconv.Itoa(userId1)}
 	t.PostForm(t.GenUrl("/company_users/delete",token), data)
 	t.AssertContains("200")
 

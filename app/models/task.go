@@ -9,8 +9,8 @@ type Task struct {
 	CompanyId        int       `json:"company_id" xorm:"not null INT(11)"`
 	ProjectId        int       `json:"project_id" xorm:"not null INT(11)"`
 	OwnerId          int       `json:"owner_id" xorm:"not null INT(11)"`
-	InChargeId       int       `json:"in_charge_id" xorm:"not null INT(11)"`
-	InChargeProgress int       `json:"in_charge_progress" xorm:"not null TINYINT(4)"`
+	LatestTransferId int64     `json:"latest_transfer_id" xorm:"not null BIGINT(20)"`
+	InChargeUserId   int       `json:"in_charge_user_id" xorm:"not null INT(11)"`
 	Priority         int       `json:"priority" xorm:"not null TINYINT(4)"`
 	Status           int       `json:"status" xorm:"not null TINYINT(4)"`
 	Name             string    `json:"name" xorm:"not null VARCHAR(256)"`

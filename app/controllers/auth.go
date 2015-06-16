@@ -15,10 +15,10 @@ type Auth struct {
 	BaseController
 }
 
-func (c Auth) Reg(username, password, sms_code string) revel.Result {
+func (c Auth) Reg(username, password, smsCode string) revel.Result {
 	c.Validation.Required(username).Message("手机号不能为空")
 	c.Validation.Required(password).Message("密码不能为空")
-	c.Validation.Required(sms_code).Message("验证码不能为空")
+	c.Validation.Required(smsCode).Message("验证码不能为空")
 
 	c.Validation.Match(username, regexp.MustCompile("^(1)\\d{10}$")).Message("手机号格式不正确")
 
@@ -35,7 +35,7 @@ func (c Auth) Reg(username, password, sms_code string) revel.Result {
 	}
 
 	//短信验证码
-	isOk, message := lib.CheckSmsCode(u.Username, sms_code)
+	isOk, message := lib.CheckSmsCode(u.Username, smsCode)
 	if !isOk {
 		return c.Err(message)
 	}
@@ -54,6 +54,17 @@ func (c Auth) Reg(username, password, sms_code string) revel.Result {
 	_, err := app.Engine.Insert(u)
 	if err != nil{
 		return c.Err("注册用户失败")
+	}
+
+	profile := new(models.UserProfiles)
+	profile.UserId = u.Id
+	profile.Name = u.Username
+	profile.CreatedAt = now
+	profile.UpdatedAt = now
+	_,err = app.Engine.Insert(profile)
+	if err != nil{
+		app.Engine.Id(u.Id).Delete(u)
+		return c.Err("注册用户失败"+err.Error())
 	}
 
 	return c.OK(u)
@@ -89,10 +100,10 @@ func (c Auth) Login(username, password string) revel.Result {
 }
 
 
-func (c Auth) ChangePassword(old_password,new_password string) revel.Result {
-	temp := utils.EncryptPassword(c.User.Salt,old_password)
+func (c Auth) ChangePassword(oldPassword,newPassword string) revel.Result {
+	temp := utils.EncryptPassword(c.User.Salt,oldPassword)
 	if temp == c.User.Password{
-		password_encrypt := utils.EncryptPassword(c.User.Salt,new_password)
+		password_encrypt := utils.EncryptPassword(c.User.Salt,newPassword)
 		_, err := app.Engine.Id(c.User.Id).Cols("password").Update(&models.Users{Password: password_encrypt,UpdatedAt:time.Now()})
 		if err == nil {
 			return c.OK("")
@@ -103,7 +114,7 @@ func (c Auth) ChangePassword(old_password,new_password string) revel.Result {
 	return c.Err("修改密码失败，请确认旧密码正确")
 }
 
-func (c Auth) GetPassword(username,new_password,sms_code string) revel.Result {
+func (c Auth) GetPassword(username,newPassword,smsCode string) revel.Result {
 	var u = &models.Users{Username: username}
 	has, _ := app.Engine.Get(u)
 
@@ -112,12 +123,12 @@ func (c Auth) GetPassword(username,new_password,sms_code string) revel.Result {
 	}
 
 	//短信验证码
-	isOk, message := lib.CheckSmsCode(username, sms_code)
+	isOk, message := lib.CheckSmsCode(username, smsCode)
 	if !isOk {
 		return c.Err(message)
 	}
 	
-	password_encrypt := utils.EncryptPassword(u.Salt,new_password)
+	password_encrypt := utils.EncryptPassword(u.Salt,newPassword)
 	_, err := app.Engine.Id(u.Id).Cols("password").Update(&models.Users{Password: password_encrypt,UpdatedAt:time.Now()})
 	
 	if err == nil {

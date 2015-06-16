@@ -50,19 +50,19 @@ func (c Project) Id(id int) revel.Result {
 	return c.OK(Project)
 }
 
-func (c Project) Add(company_id int,name,info string) revel.Result {
+func (c Project) Add(companyId int,name,info string) revel.Result {
 	result := c.validateName(name)
 
 	if nil != result{
 		return result
 	}
 
-	if !lib.IsCompanyCheckedUser(company_id,c.User.Id){
+	if !lib.IsCompanyCheckedUser(companyId,c.User.Id){
 		return c.Err("没有权限")
 	}
 
 	prj := &models.Project{
-		CompanyId:company_id,
+		CompanyId:companyId,
 		OwnerId:c.User.Id,
 		Name:name,
 		Info:info,
