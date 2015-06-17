@@ -3,8 +3,8 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2015-06-08 21:34:03
--- 服务器版本： 5.6.24
+-- Generation Time: 2015-06-17 22:32:31
+-- 服务器版本： 5.6.25
 -- PHP Version: 5.5.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -51,6 +51,35 @@ CREATE TABLE IF NOT EXISTS `company_users` (
   `updated_at` datetime NOT NULL,
   `created_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='单位成员列表';
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `complain`
+--
+
+CREATE TABLE IF NOT EXISTS `complain` (
+`id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `complain_id` int(11) NOT NULL,
+  `complain_type` int(11) NOT NULL COMMENT '1 人 2公司 3 项目 4 任务',
+  `info` text NOT NULL,
+  `created_at` datetime NOT NULL,
+  `UpdatedAt` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户举报表' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `feedback`
+--
+
+CREATE TABLE IF NOT EXISTS `feedback` (
+`id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `info` text NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户反馈' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -108,6 +137,8 @@ CREATE TABLE IF NOT EXISTS `task` (
   `company_id` int(11) NOT NULL,
   `project_id` int(11) NOT NULL,
   `owner_id` int(11) NOT NULL,
+  `latest_transfer_id` bigint(20) NOT NULL,
+  `in_charge_user_id` int(11) NOT NULL,
   `priority` tinyint(4) NOT NULL COMMENT '优先级 1低 2中 3高',
   `status` tinyint(4) NOT NULL COMMENT '状态 0初始 1处理中 2 结束',
   `name` varchar(256) NOT NULL,
@@ -115,18 +146,7 @@ CREATE TABLE IF NOT EXISTS `task` (
   `deadline` datetime NOT NULL COMMENT '截止日期',
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务' AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- 表的结构 `task_chat_log`
---
-
-CREATE TABLE IF NOT EXISTS `task_chat_log` (
-  `task_id` bigint(11) NOT NULL,
-  `log` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聊天日志';
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='任务' AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -136,15 +156,15 @@ CREATE TABLE IF NOT EXISTS `task_chat_log` (
 
 CREATE TABLE IF NOT EXISTS `task_transfer` (
 `id` bigint(20) NOT NULL,
-  `company_id` int(11) NOT NULL,
-  `project_id` int(11) NOT NULL,
   `task_id` int(11) NOT NULL,
-  `in_charge_id` int(11) NOT NULL COMMENT '当前谁负责',
-  `assign_to` int(11) DEFAULT NULL COMMENT '指派给谁',
+  `assign_fr` int(11) NOT NULL COMMENT '被谁指派',
+  `assign_to` int(11) NOT NULL COMMENT '当前谁负责',
+  `is_read` tinyint(4) NOT NULL COMMENT '0未读 1 已读',
+  `info` text NOT NULL,
   `progress` tinyint(4) NOT NULL COMMENT '进度百分比',
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务流转' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='任务流转' AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
@@ -179,7 +199,6 @@ CREATE TABLE IF NOT EXISTS `user_profiles` (
   `avatar` varchar(256) NOT NULL,
   `avatar_thumb1` varchar(256) NOT NULL,
   `avatar_thumb2` varchar(256) NOT NULL,
-  `avatar_thumb3` varchar(256) NOT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -199,6 +218,18 @@ ALTER TABLE `company`
 --
 ALTER TABLE `company_users`
  ADD UNIQUE KEY `company_id` (`company_id`,`user_id`);
+
+--
+-- Indexes for table `complain`
+--
+ALTER TABLE `complain`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `feedback`
+--
+ALTER TABLE `feedback`
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `news`
@@ -252,6 +283,16 @@ ALTER TABLE `user_profiles`
 ALTER TABLE `company`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
+-- AUTO_INCREMENT for table `complain`
+--
+ALTER TABLE `complain`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `feedback`
+--
+ALTER TABLE `feedback`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `news`
 --
 ALTER TABLE `news`
@@ -265,12 +306,12 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 -- AUTO_INCREMENT for table `task`
 --
 ALTER TABLE `task`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `task_transfer`
 --
 ALTER TABLE `task_transfer`
-MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `users`
 --
