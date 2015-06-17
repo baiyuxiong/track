@@ -15,7 +15,7 @@ type Task struct {
 }
 
 type TodoList  struct {
-	TasksInChange  []models.Task `json:"tasksInChange"`
+	TasksInCharge  []models.Task `json:"tasksInCharge"`
 	TasksOwnedByMe []models.Task `json:"tasksOwnedByMe"`
 	Users          map[string]models.UserProfiles `json:"users"`
 	Projects       map[string]models.Project `json:"projects"`
@@ -38,7 +38,7 @@ func (c Task) ListTodo() revel.Result {
 	}
 
 	todoList := TodoList{
-		TasksInChange:tasksInChange,
+		TasksInCharge:tasksInChange,
 		TasksOwnedByMe:tasksOwnedByMe,
 		Users:make(map[string]models.UserProfiles, 0),
 		Projects:make(map[string]models.Project, 0),

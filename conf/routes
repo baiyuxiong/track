@@ -10,42 +10,44 @@ GET     /                                       App.Index
 POST     /auth/reg                              Auth.Reg
 POST     /auth/login                            Auth.Login
 POST     /auth/logout                           Auth.Logout
-POST     /auth/change_password                  Auth.ChangePassword
-POST     /auth/get_password                     Auth.GetPassword
+POST     /auth/changePassword                  Auth.ChangePassword
+POST     /auth/getPassword                     Auth.GetPassword
 
 #company
 POST     /company/add                           Company.Add
 POST     /company/update                        Company.Update
-POST     /company/update_logo                   Company.UpdateLogo
+POST     /company/updateLogo                   Company.UpdateLogo
 GET      /company/list                          Company.List
 GET      /company/id                            Company.Id
 
 #company users
-POST     /company_users/add                     CompanyUsers.Add
-POST     /company_users/check                   CompanyUsers.Check
-POST     /company_users/delete                  CompanyUsers.Delete
-GET      /company_users/list                    CompanyUsers.List
+POST     /companyUsers/add                     CompanyUsers.Add
+POST     /companyUsers/check                   CompanyUsers.Check
+POST     /companyUsers/delete                  CompanyUsers.Delete
+GET      /companyUsers/list                    CompanyUsers.List
 
 #project
 POST     /project/add                           Project.Add
 POST     /project/update                        Project.Update
-GET      /project/list_by_owner                 Project.ListByOwner
-GET      /project/list_by_company               Project.ListByCompany
+GET      /project/listByOwner                 Project.ListByOwner
+GET      /project/listByCompany               Project.ListByCompany
 GET      /project/id                            Project.Id
 
 #task
 POST      /task/add                             Task.Add
-GET      /task/list_todo                        Task.ListTodo
+GET      /task/listTodo                        Task.ListTodo
 
 #task transfer
-POST      /task_transfer/add                             TaskTransfer.Add
-POST      /task_transfer/update_progress                        TaskTransfer.UpdateProgress
-POST      /task_transfer/read                        TaskTransfer.Read
-POST      /task_transfer/list_by_taskId                        TaskTransfer.ListByTaskId
+POST      /taskTransfer/add                             TaskTransfer.Add
+POST      /taskTransfer/updateProgress                        TaskTransfer.UpdateProgress
+POST      /taskTransfer/read                        TaskTransfer.Read
+POST      /taskTransfer/listByTaskId                        TaskTransfer.ListByTaskId
 
+#user profiles
+GET      /user/me                        User.Me
 
 #comm
-POST     /comm/send_sms                         Comm.SendSms
+POST     /comm/sendSms                         Comm.SendSms
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

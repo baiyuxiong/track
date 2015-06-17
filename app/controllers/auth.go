@@ -90,7 +90,9 @@ func (c Auth) Login(username, password string) revel.Result {
 	}
 
 	token := utils.Token(u.Id,u.IpAddress)
-	_, err := app.Engine.Id(u.Id).Update(&models.Users{Token: token,UpdatedAt:time.Now()})
+	u.Token = token
+	u.UpdatedAt = time.Now()
+	_, err := app.Engine.Id(u.Id).Cols("token").Cols("updated_at").Update(u)
 	if err != nil {
 		app.Engine.Id(u.Id).Delete(new(models.Users))
 		return c.Err("登录失败")

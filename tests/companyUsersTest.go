@@ -19,7 +19,7 @@ func (t *AppTest) StartTestCompanyUsers() {
 func (t *AppTest) RegAnotherUser()  {
 	smsData := make(url.Values)
 	smsData["username"] = []string{username1}
-	t.PostForm(t.GenUrl("/comm/send_sms",""), smsData)
+	t.PostForm(t.GenUrl("/comm/sendSms",""), smsData)
 	t.AssertContains("200")
 
 	var s = &models.SmsCode{Username: username1}
@@ -63,14 +63,14 @@ func (t *AppTest) AddCompanyUsers() {
 	data := make(url.Values)
 	data["companyId"] = []string{strconv.Itoa(companyId)}
 	data["userId"] = []string{strconv.Itoa(userId)}
-	t.PostForm(t.GenUrl("/company_users/add",token1), data)
+	t.PostForm(t.GenUrl("/companyUsers/add",token1), data)
 	t.AssertContains("没有权限")
 
 	data["userId"] = []string{strconv.Itoa(userId1)}
-	t.PostForm(t.GenUrl("/company_users/add",token), data)
+	t.PostForm(t.GenUrl("/companyUsers/add",token), data)
 	t.AssertContains("200")
 
-	t.PostForm(t.GenUrl("/company_users/add",token), data)
+	t.PostForm(t.GenUrl("/companyUsers/add",token), data)
 	t.AssertContains("用户已存在")
 }
 
@@ -78,15 +78,15 @@ func (t *AppTest) CheckCompanyUsers() {
 	data := make(url.Values)
 	data["companyId"] = []string{strconv.Itoa(companyId)}
 	data["userId"] = []string{strconv.Itoa(userId)}
-	t.PostForm(t.GenUrl("/company_users/check",token1), data)
+	t.PostForm(t.GenUrl("/companyUsers/check",token1), data)
 	t.AssertContains("没有权限")
 
 	data["userId"] = []string{strconv.Itoa(userId1+userId)}
-	t.PostForm(t.GenUrl("/company_users/check",token), data)
+	t.PostForm(t.GenUrl("/companyUsers/check",token), data)
 	t.AssertContains("该用户未申请")
 
 	data["userId"] = []string{strconv.Itoa(userId1)}
-	t.PostForm(t.GenUrl("/company_users/check",token), data)
+	t.PostForm(t.GenUrl("/companyUsers/check",token), data)
 	t.AssertContains("200")
 
 	companyUser := new(models.CompanyUsers)
@@ -102,15 +102,15 @@ func (t *AppTest) DeleteCompanyUsers() {
 	data := make(url.Values)
 	data["companyId"] = []string{strconv.Itoa(companyId)}
 	data["userId"] = []string{strconv.Itoa(userId)}
-	t.PostForm(t.GenUrl("/company_users/delete",token1), data)
+	t.PostForm(t.GenUrl("/companyUsers/delete",token1), data)
 	t.AssertContains("没有权限")
 
 	data["userId"] = []string{strconv.Itoa(userId1+userId)}
-	t.PostForm(t.GenUrl("/company_users/delete",token), data)
+	t.PostForm(t.GenUrl("/companyUsers/delete",token), data)
 	t.AssertContains("该用户未申请")
 
 	data["userId"] = []string{strconv.Itoa(userId1)}
-	t.PostForm(t.GenUrl("/company_users/delete",token), data)
+	t.PostForm(t.GenUrl("/companyUsers/delete",token), data)
 	t.AssertContains("200")
 
 	companyUser := new(models.CompanyUsers)

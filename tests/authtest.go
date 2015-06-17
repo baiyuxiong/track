@@ -98,25 +98,25 @@ func (t *AppTest) RegValidation() {
 
 func (t *AppTest) CommSmsValidation() {
 	data := make(url.Values)
-	t.PostForm(t.GenUrl("/comm/send_sms",token), data)
+	t.PostForm(t.GenUrl("/comm/sendSms",token), data)
 	t.AssertContains("手机号不能为空")
 
 	data["username"] = []string{"23456789012"}
-	t.PostForm(t.GenUrl("/comm/send_sms",token), data)
+	t.PostForm(t.GenUrl("/comm/sendSms",token), data)
 	t.AssertContains("手机号格式不正确")
 
 	data["username"] = []string{username}
-	t.PostForm(t.GenUrl("/comm/send_sms",token), data)
+	t.PostForm(t.GenUrl("/comm/sendSms",token), data)
 	t.AssertContains("200")
 	
-	t.PostForm(t.GenUrl("/comm/send_sms",token), data)
+	t.PostForm(t.GenUrl("/comm/sendSms",token), data)
 	t.AssertContains("200")
 	
 	var s = &models.SmsCode{Username: username}
 	has, _ := app.Engine.Get(s)
 	t.AssertEqual(true, has)
 
-	sms_code = s.Code
+	smsCode = s.Code
 }
 
 func (t *AppTest) RegUser() {
@@ -128,11 +128,11 @@ func (t *AppTest) RegUser() {
 	data["smsCode"] = []string{tempCode}
 	t.PostForm(t.GenUrl("/auth/reg",token), data)
 
-	if tempCode == sms_code {
+	if tempCode == smsCode {
 		t.AssertContains("200")
 	} else {
 		t.AssertContains("验证码不正确")
-		data["smsCode"] = []string{sms_code}
+		data["smsCode"] = []string{smsCode}
 		t.PostForm(t.GenUrl("/auth/reg",token), data)
 		t.AssertContains("200")
 	}
@@ -146,7 +146,7 @@ func (t *AppTest) RegUserAgain() {
 	data := make(url.Values)
 	data["username"] = []string{username}
 	data["password"] = []string{password}
-	data["smsCode"] = []string{sms_code}
+	data["smsCode"] = []string{smsCode}
 	
 	t.PostForm(t.GenUrl("/auth/reg",token), data)
 	t.AssertContains("用户名名已被注册，不可用")
@@ -190,11 +190,11 @@ func (t *AppTest) ChangePasswordTest() {
 	data := make(url.Values)
 	data["oldPassword"] = []string{password+"a"}
 	data["newPassword"] = []string{newPassword}
-	t.PostForm(t.GenUrl("/auth/change_password",token), data)
+	t.PostForm(t.GenUrl("/auth/changePassword",token), data)
 	t.AssertContains("修改密码失败，请确认旧密码正确")
 
 	data["oldPassword"] = []string{password}
-	t.PostForm(t.GenUrl("/auth/change_password",token), data)
+	t.PostForm(t.GenUrl("/auth/changePassword",token), data)
 	t.AssertContains("200")
 
 	data["username"] = []string{username}
@@ -208,24 +208,24 @@ func (t *AppTest) GetPasswordTest() {
 	//username,new_password,sms_code
 	data := make(url.Values)
 	data["username"] = []string{"10000000000"}
-	data["newPassword"] = []string{new_password}
-	data["smsCode"] = []string{sms_code}
-	t.PostForm(t.GenUrl("/auth/get_password",token), data)
+	data["newPassword"] = []string{newPassword}
+	data["smsCode"] = []string{smsCode}
+	t.PostForm(t.GenUrl("/auth/getPassword",token), data)
 	t.AssertContains("用户名不存在")
 
 	data["username"] = []string{username}
-	data["smsCode"] = []string{sms_code+"a"}
-	t.PostForm(t.GenUrl("/auth/get_password",token), data)
+	data["smsCode"] = []string{smsCode+"a"}
+	t.PostForm(t.GenUrl("/auth/getPassword",token), data)
 	t.AssertContains("验证码不正确")
 
-	data["smsCode"] = []string{sms_code}
-	t.PostForm(t.GenUrl("/auth/get_password",token), data)
+	data["smsCode"] = []string{smsCode}
+	t.PostForm(t.GenUrl("/auth/getPassword",token), data)
 	t.AssertContains("200")
 
 	data["username"] = []string{username}
-	data["password"] = []string{new_password}
+	data["password"] = []string{newPassword}
 	t.PostForm(t.GenUrl("/auth/login",token), data)
 	t.AssertContains("token")
 
-	password = new_password
+	password = newPassword
 }

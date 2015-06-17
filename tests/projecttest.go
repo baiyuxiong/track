@@ -78,18 +78,18 @@ func (t *AppTest) UpdateProjectTest() {
 }
 
 func (t *AppTest) ListByOwnerTest() {
-	t.Get(t.GenUrl("/project/list_by_owner",token1))
+	t.Get(t.GenUrl("/project/listByOwner",token1))
 	t.AssertNotContains(newProjectName)
 
-	t.Get(t.GenUrl("/project/list_by_owner",token))
+	t.Get(t.GenUrl("/project/listByOwner",token))
 	t.AssertContains(newProjectName)
 }
 func (t *AppTest) ListByCompanyTest() {
-	t.Get(t.GenUrl("/project/list_by_company",token1)+"&companyId="+strconv.Itoa(companyId))
+	t.Get(t.GenUrl("/project/listByCompany",token1)+"&companyId="+strconv.Itoa(companyId))
 	t.AssertNotContains(newProjectName)
 	t.AssertContains("没有权限")
 
-	t.Get(t.GenUrl("/project/list_by_company",token)+"&companyId="+strconv.Itoa(companyId))
+	t.Get(t.GenUrl("/project/listByCompany",token)+"&companyId="+strconv.Itoa(companyId))
 	t.AssertContains(newProjectName)
 }
 func (t *AppTest)IdTest() {

@@ -7,8 +7,8 @@ import (
 
 var username string = "13456789012"
 var password string = "123456"
-var new_password string = "12345678"
-var sms_code string = ""
+var newPassword string = "12345678"
+var smsCode string = ""
 var token string=""
 var userId int = 0
 

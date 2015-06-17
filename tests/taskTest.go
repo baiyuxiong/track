@@ -41,7 +41,7 @@ func (t *AppTest) AddTaskTest(){
 
 	//让用户1通过审核，变成团队成员
 	data["userId"] = []string{strconv.Itoa(userId1)}
-	t.PostForm(t.GenUrl("/company_users/check",token), data)
+	t.PostForm(t.GenUrl("/companyUsers/check",token), data)
 	t.AssertContains("200")
 
 	data["projectId"] = []string{strconv.Itoa(projectId+1)}
@@ -63,11 +63,11 @@ func (t *AppTest) AddTaskTest(){
 	t.AssertEqual(nil,err)
 	t.AssertEqual(hasT,true)
 
-	t.Get(t.GenUrl("/task/list_todo",token))
+	t.Get(t.GenUrl("/task/listTodo",token))
 	t.AssertContains(taskName)
 	t.AssertContains(username1)
 
-	t.Get(t.GenUrl("/task/list_todo",token1))
+	t.Get(t.GenUrl("/task/listTodo",token1))
 	t.AssertContains(taskName)
 	t.AssertContains(username)
 }
@@ -80,23 +80,23 @@ func (t *AppTest)AddTaskTransferTest() {
 	data["info"] = []string{taskTransferInfo}
 	data["assignTo"] = []string{strconv.Itoa(userId1)}
 
-	t.PostForm(t.GenUrl("/task_transfer/add",token), data)
+	t.PostForm(t.GenUrl("/taskTransfer/add",token), data)
 	t.AssertContains("您当前不在负责此任务，不可指派他人")
 
 	data["assignTo"] = []string{strconv.Itoa(userId+userId1)}
-	t.PostForm(t.GenUrl("/task_transfer/add",token1), data)
+	t.PostForm(t.GenUrl("/taskTransfer/add",token1), data)
 	t.AssertContains("被指派用户不是团队成员")
 
 	//指派给user
 	data["assignTo"] = []string{strconv.Itoa(userId)}
-	t.PostForm(t.GenUrl("/task_transfer/add",token1), data)
+	t.PostForm(t.GenUrl("/taskTransfer/add",token1), data)
 	t.AssertContains("200")
 
-	t.Get(t.GenUrl("/task/list_todo",token))
+	t.Get(t.GenUrl("/task/listTodo",token))
 	t.AssertContains(taskName)
 	t.AssertContains(username)
 
-	t.Get(t.GenUrl("/task/list_todo",token1))
+	t.Get(t.GenUrl("/task/listTodo",token1))
 	t.AssertContains(taskName)
 	t.AssertContains(username)
 }
@@ -109,10 +109,10 @@ func (t *AppTest)UpdateProgressTest() {
 	data["info"] = []string{taskTransferInfo}
 	data["progress"] = []string{strconv.Itoa(50)}
 
-	t.PostForm(t.GenUrl("/task_transfer/update_progress",token1), data)
+	t.PostForm(t.GenUrl("/taskTransfer/updateProgress",token1), data)
 	t.AssertContains("您当前不在负责此任务，不可修改进度")
 
-	t.PostForm(t.GenUrl("/task_transfer/update_progress",token), data)
+	t.PostForm(t.GenUrl("/taskTransfer/updateProgress",token), data)
 	t.AssertContains("200")
 
 	taskTransfer := &models.TaskTransfer{}
@@ -126,10 +126,10 @@ func (t *AppTest) ReadTaskTest() {
 	data["companyId"] = []string{strconv.Itoa(companyId)}
 	data["taskId"] = []string{strconv.Itoa(taskId)}
 
-	t.PostForm(t.GenUrl("/task_transfer/read",token1), data)
+	t.PostForm(t.GenUrl("/taskTransfer/read",token1), data)
 	t.AssertContains("您当前不在负责此任务")
 
-	t.PostForm(t.GenUrl("/task_transfer/read",token), data)
+	t.PostForm(t.GenUrl("/taskTransfer/read",token), data)
 	t.AssertContains("200")
 
 	taskTransfer := &models.TaskTransfer{}

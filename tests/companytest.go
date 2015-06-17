@@ -24,7 +24,7 @@ func (t *AppTest) StartTestCompany() {
 func (t *AppTest) GetToken() {
 	data := make(url.Values)
 	data["username"] = []string{username}
-	data["password"] = []string{new_password}
+	data["password"] = []string{newPassword}
 	t.PostForm(t.GenUrl("/auth/login",token), data)
 
 	t.AssertContains("token")
@@ -94,13 +94,13 @@ func (t *AppTest) UpdateCompany() {
 //update
 func (t *AppTest) UpdateCompanyLogo() {
 	data := make(url.Values)
-	t.PostForm(t.GenUrl("/company/update_logo",token), data)
+	t.PostForm(t.GenUrl("/company/updateLogo",token), data)
 	t.AssertContains("参数错误")
 
 	logo := "abcdef"
 	data["id"] = []string{strconv.Itoa(companyId)}
 	data["logo"] = []string{logo}
-	t.PostForm(t.GenUrl("/company/update_logo",token), data)
+	t.PostForm(t.GenUrl("/company/updateLogo",token), data)
 	t.AssertContains("200")
 
 	c := new(models.Company)
@@ -144,7 +144,7 @@ func (t *AppTest) AuthTest() {
 
 	delete(data,"name")
 	data["logo"] = []string{"111111"}
-	t.PostForm(t.GenUrl("/company/update_logo",token), data)
+	t.PostForm(t.GenUrl("/company/updateLogo",token), data)
 	t.AssertContains("没有权限")
 
 	c := new(models.Company)
