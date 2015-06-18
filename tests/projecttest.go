@@ -91,6 +91,9 @@ func (t *AppTest) ListByCompanyTest() {
 
 	t.Get(t.GenUrl("/project/listByCompany",token)+"&companyId="+strconv.Itoa(companyId))
 	t.AssertContains(newProjectName)
+
+	t.Get(t.GenUrl("/project/listCompanyAndProject",token))
+	t.AssertContains(newProjectName)
 }
 func (t *AppTest)IdTest() {
 	t.Get(t.GenUrl("/project/id",token1)+"&id="+strconv.Itoa(projectId))

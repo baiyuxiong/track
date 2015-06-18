@@ -17,6 +17,7 @@ POST     /auth/getPassword                     Auth.GetPassword
 POST     /company/add                           Company.Add
 POST     /company/update                        Company.Update
 POST     /company/updateLogo                   Company.UpdateLogo
+GET      /company/listMyCompanies                          Company.ListMyCompanies
 GET      /company/list                          Company.List
 GET      /company/id                            Company.Id
 
@@ -31,6 +32,7 @@ POST     /project/add                           Project.Add
 POST     /project/update                        Project.Update
 GET      /project/listByOwner                 Project.ListByOwner
 GET      /project/listByCompany               Project.ListByCompany
+GET      /project/listCompanyAndProject               Project.ListCompanyAndProject
 GET      /project/id                            Project.Id
 
 #task

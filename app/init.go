@@ -62,6 +62,7 @@ func InitDB() {
 	Engine.ShowErr = true
 	Engine.ShowDebug = true
 	Engine.ShowWarn = true
+	Engine.ShowInfo = true
 
 	cacher := xorm.NewLRUCacher(xorm.NewMemoryStore(), 5000)
 	Engine.SetDefaultCacher(cacher)

@@ -15,10 +15,15 @@ type Company struct {
 
 func (c Company) List() revel.Result {
 	companys := make([]models.Company, 0)
-	err := app.Engine.Where("owner_id = ?",c.User.Id).OrderBy("updated_at desc").Find(&companys)
-	if err != nil{
+	err := app.Engine.Where("owner_id = ?", c.User.Id).OrderBy("updated_at desc").Find(&companys)
+	if err != nil {
 		return c.Err(err.Error())
 	}
+	return c.OK(companys)
+}
+
+func (c Company) ListMyCompanies() revel.Result {
+	companys := lib.GetMyCompanies(c.User.Id)
 	return c.OK(companys)
 }
 

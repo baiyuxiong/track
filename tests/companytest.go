@@ -97,7 +97,7 @@ func (t *AppTest) UpdateCompanyLogo() {
 	t.PostForm(t.GenUrl("/company/updateLogo",token), data)
 	t.AssertContains("参数错误")
 
-	logo := "abcdef"
+	logo := "img/default.png"
 	data["id"] = []string{strconv.Itoa(companyId)}
 	data["logo"] = []string{logo}
 	t.PostForm(t.GenUrl("/company/updateLogo",token), data)
@@ -120,7 +120,7 @@ func (t *AppTest) CompanyByID() {
 
 //list
 func (t *AppTest) CompanyList() {
-	t.Get(t.GenUrl("/company/list",token)+"&id="+strconv.Itoa(companyId))
+	t.Get(t.GenUrl("/company/ListMyCompanies",token))
 	t.AssertContains(companyName)
 }
 
