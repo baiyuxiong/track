@@ -59,6 +59,7 @@ func (c Auth) Reg(username, password, smsCode string) revel.Result {
 	profile := new(models.UserProfiles)
 	profile.UserId = u.Id
 	profile.Name = u.Username
+	profile.Phone = u.Username
 	profile.CreatedAt = now
 	profile.UpdatedAt = now
 	_,err = app.Engine.Insert(profile)

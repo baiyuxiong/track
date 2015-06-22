@@ -66,6 +66,10 @@ func StringInSlice(a string, list []string) bool {
     return false
 }
 
+func FormatNow(format string) string{
+	return time.Now().Format(format)
+}
+
 // 加密密码,转成md5
 func EncryptPassword(salt, password string) string {
 	return Md5String(password+salt)

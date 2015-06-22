@@ -8,6 +8,8 @@ const (
 	URL_CLIENT_ID= "cf23df2207d99a74"
 )
 
+var UPLOAD_ALLOWED_FILE_TYPE []string = []string{"avatar","companyLogo"}
+
 //company
 const (
 	COMPANY_NAME_MINSIZE = 4

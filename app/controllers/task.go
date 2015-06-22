@@ -153,6 +153,89 @@ func (c Task) Add(companyId, projectId, priority, inChargeUserId int, name, info
 	return c.OK(nil)
 }
 
+type TaskDetail struct {
+	Task models.Task `json:"task"`
+	TaskTransfers []models.TaskTransfer `json:"taskTransfers"`
+	TaskTransferUsers map[string]models.UserProfiles `json:"taskTransferUsers"`
+	Owner models.UserProfiles `json:"owner"`
+	InChargeUser models.UserProfiles`json:"inChargeUser"`
+	Company models.Company `json:"company"`
+	Project models.Project `json:"project"`
+}
+func (c Task) Detail(companyId, taskId int) revel.Result{
+	if !lib.IsCompanyCheckedUser(companyId, c.User.Id) {
+		return c.Err("没有权限")
+	}
+	taskTransferUsers := make(map[string]models.UserProfiles,0)
+
+	taskDetail := TaskDetail{}
+
+	task := &models.Task{}
+	has, _ := app.Engine.Id(taskId).Get(task)
+	if !has {
+		return c.Err("任务记录不存在")
+	}
+	taskDetail.Task = *task
+
+	user := &models.UserProfiles{}
+	has, _ = app.Engine.Id(task.OwnerId).Get(user)
+	if !has {
+		return c.Err("用户记录不存在")
+	}
+	taskDetail.Owner = *user
+	taskTransferUsers[fmt.Sprint(task.OwnerId)] = *user
+
+	project := &models.Project{}
+	has, _ = app.Engine.Id(task.ProjectId).Get(project)
+	if !has {
+		return c.Err("项目记录不存在")
+	}
+	taskDetail.Project = *project
+
+	company := &models.Company{}
+	has, _ = app.Engine.Id(task.CompanyId).Get(company)
+	if !has {
+		return c.Err("组织记录不存在")
+	}
+	taskDetail.Company = *company
+
+	if task.OwnerId == task.InChargeUserId{
+		taskDetail.InChargeUser = *user
+	}else{
+		userInCharge := &models.UserProfiles{}
+		has, _ = app.Engine.Id(task.InChargeUserId).Get(userInCharge)
+		if !has {
+			return c.Err("用户记录不存在")
+		}
+		taskDetail.InChargeUser = *userInCharge
+		taskTransferUsers[fmt.Sprint(task.InChargeUserId)] = *userInCharge
+	}
+
+	//指派过程
+	transfers := make([]models.TaskTransfer, 0)
+	err := app.Engine.Where("task_id = ?", task.Id).OrderBy("updated_at desc").Find(&transfers)
+	if err != nil {
+		return c.Err(err.Error())
+	}
+	taskDetail.TaskTransfers = transfers
+
+	//指派涉及用户信息
+	for _,transfer := range transfers{
+		_, exists := taskTransferUsers[fmt.Sprint(transfer.AssignTo)]
+		if !exists {
+			transferUser := &models.UserProfiles{}
+			has, _ = app.Engine.Id(transfer.AssignTo).Get(transferUser)
+			if has {
+				taskTransferUsers[fmt.Sprint(transfer.AssignTo)] = *transferUser
+			}
+		}
+
+	}
+	taskDetail.TaskTransferUsers = taskTransferUsers
+
+	return c.OK(taskDetail)
+}
+
 func (c Task) Done(companyId, taskId int) revel.Result {
 	if !lib.IsCompanyCheckedUser(companyId, c.User.Id) {
 		return c.Err("没有权限")

@@ -10,46 +10,50 @@ GET     /                                       App.Index
 POST     /auth/reg                              Auth.Reg
 POST     /auth/login                            Auth.Login
 POST     /auth/logout                           Auth.Logout
-POST     /auth/changePassword                  Auth.ChangePassword
-POST     /auth/getPassword                     Auth.GetPassword
+POST     /auth/changePassword                   Auth.ChangePassword
+POST     /auth/getPassword                      Auth.GetPassword
 
 #company
 POST     /company/add                           Company.Add
 POST     /company/update                        Company.Update
-POST     /company/updateLogo                   Company.UpdateLogo
-GET      /company/listMyCompanies                          Company.ListMyCompanies
+POST     /company/updateLogo                    Company.UpdateLogo
+GET      /company/listMyCompanies               Company.ListMyCompanies
 GET      /company/list                          Company.List
-GET      /company/id                            Company.Id
+GET      /company/idl                           Company.Id
+GET      /company/detail                          Company.Detail
 
 #company users
 POST     /companyUsers/add                     CompanyUsers.Add
 POST     /companyUsers/check                   CompanyUsers.Check
 POST     /companyUsers/delete                  CompanyUsers.Delete
 GET      /companyUsers/list                    CompanyUsers.List
+POST     /companyUsers/addByCompanyName         CompanyUsers.AddByCompanyName
 
 #project
 POST     /project/add                           Project.Add
 POST     /project/update                        Project.Update
-GET      /project/listByOwner                 Project.ListByOwner
-GET      /project/listByCompany               Project.ListByCompany
-GET      /project/listCompanyAndProject               Project.ListCompanyAndProject
+GET      /project/listByOwner                   Project.ListByOwner
+GET      /project/listByCompany                 Project.ListByCompany
+GET      /project/listCompanyAndProject         Project.ListCompanyAndProject
 GET      /project/id                            Project.Id
 
 #task
-POST      /task/add                             Task.Add
+POST     /task/add                             Task.Add
 GET      /task/listTodo                        Task.ListTodo
+GET      /task/detail                          Task.Detail
 
 #task transfer
-POST      /taskTransfer/add                             TaskTransfer.Add
-POST      /taskTransfer/updateProgress                        TaskTransfer.UpdateProgress
+POST      /taskTransfer/add                         TaskTransfer.Add
+POST      /taskTransfer/updateProgress              TaskTransfer.UpdateProgress
 POST      /taskTransfer/read                        TaskTransfer.Read
-POST      /taskTransfer/listByTaskId                        TaskTransfer.ListByTaskId
+POST      /taskTransfer/listByTaskId                TaskTransfer.ListByTaskId
 
 #user profiles
-GET      /user/me                        User.Me
+GET      /user/me                                User.Me
 
 #comm
 POST     /comm/sendSms                         Comm.SendSms
+POST     /comm/Upload/:fileType                Comm.SendSms
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

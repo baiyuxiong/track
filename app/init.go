@@ -71,6 +71,8 @@ func InitDB() {
 }
 
 func pingDB() {
-	Engine.Ping()
-	time.Sleep(time.Minute * 10) //每10分钟ping一下，保持连接有效
+	for {
+		Engine.Ping()
+		time.Sleep(time.Minute * 10) //每10分钟ping一下，保持连接有效
+	}
 }

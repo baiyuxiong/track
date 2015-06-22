@@ -36,7 +36,49 @@ func (c Company) Id(id int) revel.Result {
 	return c.OK(company)
 }
 
-func (c Company) Add(name ,info ,phone,address string) revel.Result {
+type CompanyDetail struct{
+	Company models.Company `json:"company"`
+	Projects []models.Project `json:"projects"`
+	UserProfiles [] models.UserProfiles `json:"userProfiles"`
+}
+func (c Company) Detail(id int) revel.Result {
+	company := &models.Company{}
+	_, err := app.Engine.Id(id).Get(company)
+	if err != nil{
+		return c.Err(err.Error())
+	}
+
+	projects := make([]models.Project, 0)
+	err = app.Engine.Where("company_id = ?", company.Id).Limit(3, 0).OrderBy("updated_at desc").Find(&projects)
+	if err != nil {
+		return c.Err(err.Error())
+	}
+
+	companyUsers := make([]models.CompanyUsers, 0)
+	err = app.Engine.Where("company_id = ?", company.Id).Limit(6, 0).OrderBy("updated_at desc").Find(&companyUsers)
+	if err != nil {
+		return c.Err(err.Error())
+	}
+
+	userProfiles := make([]models.UserProfiles, 0)
+	for _,companyUser := range companyUsers{
+		userProfile := &models.UserProfiles{}
+		has, _ := app.Engine.Id(companyUser.UserId).Get(userProfile)
+		if has {
+			userProfiles = append(userProfiles,*userProfile)
+		}
+	}
+
+	companyDetail := CompanyDetail{
+		Company : *company,
+		Projects:projects,
+		UserProfiles:userProfiles,
+	}
+
+	return c.OK(companyDetail)
+}
+
+func (c Company) Add(name ,info ,phone,address,logo string) revel.Result {
 	result := c.validateName(name)
 
 	if nil != result{
@@ -46,9 +88,12 @@ func (c Company) Add(name ,info ,phone,address string) revel.Result {
 	now := time.Now()
 	cmp := &models.Company{
 		OwnerId:c.User.Id,
+		UserCheckCount:1,
+		UserUncheckCount:0,
 		Name:name,
 		Info:info,
 		Phone:phone,
+		Logo:logo,
 		Address:address,
 		CreatedAt:now,
 		UpdatedAt:now,

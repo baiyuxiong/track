@@ -18,16 +18,16 @@ var userId1 int = 0
 var token1 string=""
 var smsCode1 string = ""
 
-var companyName string = "track cmp"
+var companyName string = "西安一元网络科技有限公司"
 var companyId int = 0
 
-var projectName string = "track project"
-var newProjectName string = "track project 123"
+var projectName string = "完成团队创建和加入"
+var newProjectName string = "完成团队创建、加入和详情"
 var projectId int = 0
 
-var taskName string = "写个文档吧"
-var taskInfo string = "文档要求老高了"
-var taskTransferInfo string = "你行你上啊"
+var taskName string = "备份代码到github"
+var taskInfo string = "定时更新代码"
+var taskTransferInfo string = "我的部分已完成，该你了"
 var taskId int = 0
 
 

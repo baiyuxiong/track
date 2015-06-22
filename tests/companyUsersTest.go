@@ -72,6 +72,13 @@ func (t *AppTest) AddCompanyUsers() {
 
 	t.PostForm(t.GenUrl("/companyUsers/add",token), data)
 	t.AssertContains("用户已存在")
+
+	company1 := new(models.Company)
+	has,err := app.Engine.Id(companyId).Get(company1)
+	t.AssertEqual(has,true)
+	t.AssertEqual(err,nil)
+	t.AssertEqual(company1.UserCheckCount,1)
+	t.AssertEqual(company1.UserUncheckCount,1)
 }
 
 func (t *AppTest) CheckCompanyUsers() {
@@ -95,6 +102,13 @@ func (t *AppTest) CheckCompanyUsers() {
 	t.AssertEqual(has,true)
 	t.AssertEqual(err,nil)
 	t.AssertEqual(companyUser.Status,1)
+
+	company := new(models.Company)
+	has,err = app.Engine.Id(companyId).Get(company)
+	t.AssertEqual(has,true)
+	t.AssertEqual(err,nil)
+	t.AssertEqual(company.UserCheckCount,2)
+	t.AssertEqual(company.UserUncheckCount,0)
 }
 
 
@@ -119,4 +133,11 @@ func (t *AppTest) DeleteCompanyUsers() {
 	t.AssertEqual(has,true)
 	t.AssertEqual(err,nil)
 	t.AssertEqual(companyUser.Status,2)
+
+	company := new(models.Company)
+	has,err = app.Engine.Id(companyId).Get(company)
+	t.AssertEqual(has,true)
+	t.AssertEqual(err,nil)
+	t.AssertEqual(company.UserCheckCount,1)
+	t.AssertEqual(company.UserUncheckCount,0)
 }
