@@ -73,6 +73,10 @@ func (c CompanyUsers) Add(companyId, userId int) revel.Result {
 	return c.OK(nil)
 }
 func (c CompanyUsers) AddByCompanyName(companyName string, userId int) revel.Result {
+
+	if len(companyName) == 0{
+		return c.Err("请输入完整的单位名称，不能为空")
+	}
 	company := &models.Company{}
 	has, err := app.Engine.Where("name = ?",companyName).Get(company)
 	if err != nil{

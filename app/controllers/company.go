@@ -42,6 +42,10 @@ type CompanyDetail struct{
 	UserProfiles [] models.UserProfiles `json:"userProfiles"`
 }
 func (c Company) Detail(id int) revel.Result {
+	if !lib.IsCompanyCheckedUser(id,c.User.Id){
+		return c.Err("没有权限")
+	}
+
 	company := &models.Company{}
 	_, err := app.Engine.Id(id).Get(company)
 	if err != nil{

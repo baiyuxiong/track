@@ -36,6 +36,7 @@ GET      /project/listByOwner                   Project.ListByOwner
 GET      /project/listByCompany                 Project.ListByCompany
 GET      /project/listCompanyAndProject         Project.ListCompanyAndProject
 GET      /project/id                            Project.Id
+GET     /project/detail                         Project.Detail
 
 #task
 POST     /task/add                             Task.Add

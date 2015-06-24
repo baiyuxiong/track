@@ -9,9 +9,6 @@ import (
 )
 
 func (t *AppTest) StartTestProject() {
-//	token = ""
-//	t.GetToken()
-//	t.ClearCompanyUsersTable()
 	t.ClearProjectTable()
 	t.User1UncheckFromCompanyMember()
 	t.AddProjectTest()
@@ -19,6 +16,7 @@ func (t *AppTest) StartTestProject() {
 	t.ListByOwnerTest()
 	t.ListByCompanyTest()
 	t.IdTest()
+	t.ProjectDetailTest()
 }
 
 func (t *AppTest) User1UncheckFromCompanyMember() {
@@ -97,9 +95,17 @@ func (t *AppTest) ListByCompanyTest() {
 }
 func (t *AppTest)IdTest() {
 	t.Get(t.GenUrl("/project/id",token1)+"&id="+strconv.Itoa(projectId))
-	t.AssertNotContains(newProjectName)
 	t.AssertContains("没有权限")
 
 	t.Get(t.GenUrl("/project/id",token)+"&id="+strconv.Itoa(projectId))
 	t.AssertContains(newProjectName)
+}
+
+func (t *AppTest)ProjectDetailTest() {
+	t.Get(t.GenUrl("/project/detail",token)+"&id="+strconv.Itoa(projectId)+"&companyId="+strconv.Itoa(companyId+1))
+	t.AssertContains("没有权限")
+
+	t.Get(t.GenUrl("/project/detail",token)+"&id="+strconv.Itoa(projectId)+"&companyId="+strconv.Itoa(companyId))
+	t.AssertContains(newProjectName)
+	t.AssertContains(username)
 }

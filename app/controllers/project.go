@@ -37,7 +37,7 @@ func (c Project) ListByCompany(companyId int) revel.Result {
 	return c.OK(projects)
 }
 
-type CompaniesAdnPorjects struct {
+type CompaniesAndPorjects struct {
 	Companys *lib.MyCompanies    `json:"companys"`
 	Projects map[string][]models.Project    `json:"projects"`
 }
@@ -52,7 +52,7 @@ func (c Project) ListCompanyAndProject() revel.Result {
 		allCompanyProjects[fmt.Sprintf("%d", company.Id)] = projects
 	}
 	return c.OK(
-		CompaniesAdnPorjects{
+		CompaniesAndPorjects{
 			Companys:companys,
 			Projects:allCompanyProjects,
 		})
@@ -70,6 +70,67 @@ func (c Project) Id(id int) revel.Result {
 	}
 
 	return c.OK(Project)
+}
+
+
+type ProjectDetail struct {
+	Project      *models.Project `json:"project"`
+	Tasks        []models.Task `json:"tasks"`
+	UserProfiles map[string]models.UserProfiles `json:"userProfiles"`
+}
+
+func (c Project) Detail(companyId, id int) revel.Result {
+
+	if !lib.IsCompanyCheckedUser(companyId, c.User.Id) {
+		return c.Err("没有权限")
+	}
+
+	isBelongTo, project := lib.IsProjectBelongToCompany(nil, id, companyId)
+	if !isBelongTo {
+		return c.Err("没有权限")
+	}
+
+	if nil == project {
+		return c.Err("数据不存在")
+	}
+
+	tasks := make([]models.Task, 0);
+	err := app.Engine.Where("company_id = ? and project_id= ?", companyId, id).OrderBy("updated_at desc").Find(&tasks)
+	if err != nil {
+		return c.Err(err.Error())
+	}
+
+	userProfiles := make(map[string]models.UserProfiles);
+
+	//任务涉及用户信息
+	for _, task := range tasks {
+		//任务发起人
+		_, exists := userProfiles[fmt.Sprint(task.OwnerId)]
+		if !exists {
+			userProfile := &models.UserProfiles{}
+			has, _ := app.Engine.Id(task.OwnerId).Get(userProfile)
+			if has {
+				userProfiles[fmt.Sprint(task.OwnerId)] = *userProfile
+			}
+		}
+
+		//当前指派
+		_, exists = userProfiles[fmt.Sprint(task.InChargeUserId)]
+		if !exists {
+			userProfile := &models.UserProfiles{}
+			has, _ := app.Engine.Id(task.InChargeUserId).Get(userProfile)
+			if has {
+				userProfiles[fmt.Sprint(task.InChargeUserId)] = *userProfile
+			}
+		}
+	}
+
+	projectDetail := ProjectDetail{
+		Project: project,
+		Tasks:tasks,
+		UserProfiles:userProfiles,
+	}
+	return c.OK(projectDetail)
 }
 
 func (c Project) Add(companyId int, name, info string) revel.Result {
