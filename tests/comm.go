@@ -8,6 +8,8 @@ import (
 var username string = "13456789012"
 var password string = "123456"
 var newPassword string = "12345678"
+var profileName = "隔壁老王"
+var profileAvatar = ""
 var smsCode string = ""
 var token string=""
 var userId int = 0

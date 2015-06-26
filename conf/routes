@@ -51,6 +51,7 @@ POST      /taskTransfer/listByTaskId                TaskTransfer.ListByTaskId
 
 #user profiles
 GET      /user/me                                User.Me
+POST      /user/editProfile                                User.EditProfile
 
 #comm
 POST     /comm/sendSms                         Comm.SendSms

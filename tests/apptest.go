@@ -16,6 +16,7 @@ func (t *AppTest) TestAll() {
 	t.StartTestCompanyUsers()
 	t.StartTestProject()
 	t.StartTestTask()
+	t.StartTestUser()
 }
 
 func (t *AppTest) After() {
